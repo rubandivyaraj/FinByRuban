@@ -7,7 +7,7 @@ A simple, responsive finance calculator suite in Indian Rupees (INR). It runs as
 ## Run locally
 
 1. Download or clone the repo.
-2. Open `fincal.html` in any modern browser.
+2. Open `index.html` in any modern browser.
 
 An internet connection is needed for the charts (Chart.js) and the Inter font, which both load from a CDN.
 

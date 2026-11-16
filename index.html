@@ -1,10 +1,47 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-IN">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FinCal by Ruban</title>
+  <title>FinCal by Ruban – Free EMI, SIP, FD &amp; Home Loan Calculator India (₹ INR)</title>
+  <meta name="description"
+    content="Free online finance calculators for India: home loan EMI, personal loan EMI, SIP step-up, and fixed deposit (FD) calculator with tax and inflation. Instant results in ₹ INR with charts.">
+  <meta name="keywords"
+    content="EMI calculator India, home loan EMI calculator, personal loan calculator, SIP calculator, step-up SIP calculator, FD calculator, fixed deposit calculator, loan prepayment calculator, inflation adjusted returns, finance calculator INR">
+  <meta name="author" content="Ruban Divyaraj">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="canonical" href="https://rubandivyaraj.github.io/FinByRuban/">
+
+  <!-- Open Graph / social sharing -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="FinCal by Ruban">
+  <meta property="og:locale" content="en_IN">
+  <meta property="og:title" content="FinCal by Ruban – EMI, SIP, FD &amp; Home Loan Calculator (India)">
+  <meta property="og:description"
+    content="Plan your home loan, personal loan, SIP and fixed deposit in ₹ INR. Free, instant, with charts.">
+  <meta property="og:url" content="https://rubandivyaraj.github.io/FinByRuban/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="FinCal by Ruban – EMI, SIP, FD &amp; Home Loan Calculator (India)">
+  <meta name="twitter:description"
+    content="Free finance calculators for India: EMI, SIP step-up, FD with tax and inflation.">
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "FinCal by Ruban",
+    "url": "https://rubandivyaraj.github.io/FinByRuban/",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "inLanguage": "en-IN",
+    "description": "Free home loan EMI, personal loan, SIP step-up and fixed deposit calculators in Indian Rupees.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+    "author": { "@type": "Person", "name": "Ruban Divyaraj", "url": "https://github.com/rubandivyaraj" }
+  }
+  </script>
 
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
@@ -321,6 +358,24 @@
       height: 300px;
     }
 
+    .about {
+      padding-top: 0;
+    }
+
+    .about details {
+      margin-bottom: 10px;
+    }
+
+    .about summary {
+      cursor: pointer;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .about p.note {
+      margin-bottom: 12px;
+    }
+
     footer {
       text-align: center;
       color: var(--sub);
@@ -425,6 +480,33 @@
   </nav>
 
   <main class="container" id="app"></main>
+  <noscript><p style="text-align:center;padding:20px">Please enable JavaScript to use the calculators.</p></noscript>
+
+  <section class="container about" aria-labelledby="about-h">
+    <div class="card">
+      <h2 id="about-h">Free EMI, SIP and FD calculators for India</h2>
+      <p class="note">FinCal by Ruban is a free finance calculator in Indian Rupees (₹). Use it to estimate your
+        <strong>home loan EMI</strong>, <strong>personal loan EMI</strong>, <strong>SIP returns with yearly
+          step-up</strong> and <strong>fixed deposit (FD) maturity value</strong> after tax and inflation. See charts
+        and totals instantly, with no sign-up.</p>
+      <h3 class="sec">Common questions</h3>
+      <details><summary>How is home loan EMI calculated?</summary>
+        <p class="note">EMI = P × r × (1+r)ⁿ ÷ ((1+r)ⁿ − 1), where P is the loan amount, r the monthly interest rate and
+          n the number of months.</p>
+      </details>
+      <details><summary>What is a step-up SIP?</summary>
+        <p class="note">A SIP where you raise your monthly investment by a fixed percentage every year, which grows
+          your corpus faster than a flat SIP.</p>
+      </details>
+      <details><summary>Does the FD calculator include tax and inflation?</summary>
+        <p class="note">Yes. It shows tax on interest at your slab, the post-tax value and what the money is worth
+          after inflation.</p>
+      </details>
+      <details><summary>Can extra payments reduce my loan interest?</summary>
+        <p class="note">Yes. Enter a yearly extra payment to see interest saved and how much sooner the loan ends.</p>
+      </details>
+    </div>
+  </section>
 
   <footer>
     <p>Educational estimates only. Not financial advice. Actual rates, taxes and fees may differ.</p>

@@ -327,6 +327,41 @@
       padding: 40px 20px;
     }
 
+    footer .credit {
+      margin-top: 12px;
+      font-size: .9rem;
+    }
+
+    .social {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .social a {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--card);
+      color: var(--primary);
+      box-shadow: var(--shadow);
+      transition: .25s;
+    }
+
+    .social a:hover {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff;
+      transform: translateY(-3px);
+    }
+
+    .social svg {
+      width: 20px;
+      height: 20px;
+    }
+
     @media (max-width: 900px) {
       .hero h1 {
         font-size: 2rem;
@@ -392,7 +427,32 @@
   <main class="container" id="app"></main>
 
   <footer>
-    Educational estimates only. Not financial advice. Actual rates, taxes and fees may differ.
+    <p>Educational estimates only. Not financial advice. Actual rates, taxes and fees may differ.</p>
+    <p class="credit">
+      Built by <strong>Ruban Divyaraj</strong> · 🤝 Open to collaboration
+    </p>
+    <div class="social">
+      <a href="mailto:rubandivyaraj@gmail.com" aria-label="Email" title="Email">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="2" />
+          <path d="m22 7-10 6L2 7" />
+        </svg>
+      </a>
+      <a href="https://www.linkedin.com/in/rubandivyaraj" target="_blank" rel="noopener" aria-label="LinkedIn"
+        title="LinkedIn">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" />
+        </svg>
+      </a>
+      <a href="https://github.com/rubandivyaraj" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.6-1.4-1.4-1.8-1.4-1.8-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.5.1-3.2 0 0 1-.3 3.3 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.7 1.7.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .3z" />
+        </svg>
+      </a>
+    </div>
   </footer>
 
   <script>
@@ -495,11 +555,11 @@
       sip: {
         title: 'Monthly Investment (SIP)',
         fields: [
-          num('s_amt', 'I invest every month (₹)', 10000, 500, ''),
-          num('s_step', 'Increase it every year by (%)', 10, 1, ''),
+          num('s_amt', 'I invest every month (₹)', 10000, 500),
+          num('s_step', 'Increase it every year by (%)', 10, 1),
           num('s_years', 'For how many years', 15, 1),
-          num('s_rate', 'Expected yearly return (%)', 12, .1, ''),
-          num('s_inf', 'Expected yearly inflation (%)', 6, .1, ''),
+          num('s_rate', 'Expected yearly return (%)', 12, .1),
+          num('s_inf', 'Expected yearly inflation (%)', 6, .1),
           num('s_goal', 'My target amount (₹)', 10000000, 100000, 'Optional. Set to 0 to ignore')
         ],
         compute(v) {
@@ -518,7 +578,7 @@
           const rows = [
             ['You invest in total', inr(s.inv)],
             ['Growth earned', inr(s.bal - s.inv), 'good', ''],
-            ['Worth in today\'s money', inr(real), '', 'After inflation, what this could buy at today\'s prices']
+            ['Worth in today\'s money', inr(real), '', '']
           ];
           let note = '', goal;
           if (hasGoal) {

@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinCal by Ruban</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --secondary: #7c3aed;
+      --success: #16a34a;
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #0f172a;
+      --sub: #64748b;
+      --input-bg: #ffffff;
+      --input-border: #dbe2ea;
+      --tab-bg: #e2e8f0;
+      --shadow: 0 10px 35px rgba(0, 0, 0, .08);
+      --hero-start: #2563eb;
+      --hero-end: #7c3aed;
+      --hero-text: #ffffff;
+    }
+
+    .dark {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f8fafc;
+      --sub: #cbd5e1;
+      --input-bg: #334155;
+      --input-border: #475569;
+      --tab-bg: #334155;
+      --shadow: 0 10px 35px rgba(0, 0, 0, .35);
+      --hero-start: #0f172a;
+      --hero-end: #334155;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: background .35s, color .35s;
+    }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(135deg, var(--hero-start), var(--hero-end));
+      color: var(--hero-text);
+      text-align: center;
+      padding: 70px 20px 80px;
+      transition: .4s;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(255, 255, 255, .15), transparent 40%);
+    }
+
+    .hero h1 {
+      position: relative;
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      position: relative;
+      font-size: 1.1rem;
+      opacity: .92;
+    }
+
+    .hero-buttons {
+      position: relative;
+      margin-top: 24px;
+    }
+
+    .theme-btn {
+      background: rgba(255, 255, 255, .15);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, .25);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 12px 22px;
+      border-radius: 999px;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 600;
+      transition: .25s;
+    }
+
+    .theme-btn:hover {
+      background: rgba(255, 255, 255, .25);
+      transform: translateY(-2px);
+    }
+
+    /* DASHBOARD */
+    .dashboard {
+      max-width: 1200px;
+      margin: -30px auto 20px;
+      padding: 0 16px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+    }
+
+    .metric {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .metric span {
+      color: var(--sub);
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .metric strong {
+      font-size: 1.4rem;
+      color: var(--primary);
+    }
+
+    /* TABS */
+    .tabs {
+      max-width: 1200px;
+      margin: auto;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tabs button {
+      border: none;
+      cursor: pointer;
+      background: var(--tab-bg);
+      color: var(--text);
+      padding: 12px 18px;
+      border-radius: 999px;
+      font: inherit;
+      font-weight: 600;
+      transition: .25s;
+    }
+
+    .tabs button:hover {
+      transform: translateY(-2px);
+    }
+
+    .tabs button.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    /* MAIN */
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 14px 16px 50px;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--card);
+      box-shadow: var(--shadow);
+      border-radius: 22px;
+      padding: 24px;
+      min-width: 0;
+    }
+
+    .card h2 {
+      margin-bottom: 18px;
+    }
+
+    .card h3.sec {
+      margin: 8px 0 12px;
+      font-size: .85rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--sub);
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: .92rem;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--input-border);
+      font: inherit;
+      background: var(--input-bg);
+      color: var(--text);
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 12px;
+    }
+
+    .results {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .big-result {
+      padding: 24px;
+      text-align: center;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, .12), rgba(124, 58, 237, .12));
+    }
+
+    .big-result h3 {
+      margin-bottom: 8px;
+      font-size: 1rem;
+      color: var(--sub);
+    }
+
+    .big-result strong {
+      font-size: 2rem;
+      color: var(--primary);
+      word-break: break-word;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(148, 163, 184, .25);
+    }
+
+    .result-row strong {
+      color: var(--primary);
+      text-align: right;
+    }
+
+    .result-row strong.good {
+      color: var(--success);
+    }
+
+    .goal-bar {
+      height: 12px;
+      border-radius: 99px;
+      background: var(--tab-bg);
+      overflow: hidden;
+      margin: 6px 0;
+    }
+
+    .goal-bar div {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+      transition: width .4s;
+    }
+
+    .note {
+      font-size: .85rem;
+      color: var(--sub);
+    }
+
+    .hint {
+      display: block;
+      font-size: .78rem;
+      font-weight: 400;
+      color: var(--sub);
+      margin-top: 4px;
+    }
+
+    .charts {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 20px;
+    }
+
+    .chart-box {
+      position: relative;
+      height: 300px;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--sub);
+      padding: 40px 20px;
+    }
+
+    @media (max-width: 900px) {
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero {
+        padding: 50px 16px 70px;
+      }
+
+      .panel.active,
+      .charts {
+        grid-template-columns: 1fr;
+      }
+
+      .big-result strong {
+        font-size: 1.6rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .field-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tabs button {
+        padding: 10px 14px;
+        font-size: .9rem;
+      }
+
+      .card {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="hero">
+    <h1>💰 FinCal by Ruban</h1>
+    <p>Home Loan • SIP • Fixed Deposit • EMI Calculator</p>
+    <div class="hero-buttons">
+      <button class="theme-btn" id="themeBtn" type="button">🌙 Dark Mode</button>
+    </div>
+  </header>
+
+  <section class="dashboard">
+    <div class="summary">
+      <div class="metric"><span>Modules</span><strong>4</strong></div>
+      <div class="metric"><span>Currency</span><strong>₹ INR</strong></div>
+      <div class="metric"><span>Realtime</span><strong>Instant</strong></div>
+      <div class="metric"><span>Version</span><strong>3.0</strong></div>
+    </div>
+  </section>
+
+  <nav class="tabs" id="tabs">
+    <button data-tab="home" class="active">🏠 Buy Home</button>
+    <button data-tab="sip">📈 Invest</button>
+    <button data-tab="fd">💰 Save</button>
+    <button data-tab="loan">🏦 Loan</button>
+  </nav>
+
+  <main class="container" id="app"></main>
+
+  <footer>
+    Educational estimates only. Not financial advice. Actual rates, taxes and fees may differ.
+  </footer>
+
+  <script>
+    /* ---------- Helpers ---------- */
+    const inr = v => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(isFinite(v) ? v : 0);
+    const pct = v => (isFinite(v) ? v : 0).toFixed(1) + '%';
+    const dur = m => `${Math.floor(m / 12)} yr ${m % 12} mo`;
+    const $ = id => document.getElementById(id);
+
+    /* ---------- Theme: auto-detect + persistence ---------- */
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    function applyTheme(dark) {
+      document.body.classList.toggle('dark', dark);
+      $('themeBtn').textContent = dark ? '☀️ Light Mode' : '🌙 Dark Mode';
+      if (window.Chart) {
+        Chart.defaults.color = dark ? '#cbd5e1' : '#64748b';
+        Chart.defaults.borderColor = dark ? 'rgba(148,163,184,.2)' : 'rgba(148,163,184,.25)';
+        Object.values(charts).forEach(c => c.update());
+      }
+    }
+    const savedTheme = localStorage.getItem('fincal.theme');
+    const charts = {};
+    applyTheme(savedTheme ? savedTheme === 'dark' : media.matches);
+    $('themeBtn').addEventListener('click', () => {
+      const dark = !document.body.classList.contains('dark');
+      localStorage.setItem('fincal.theme', dark ? 'dark' : 'light');
+      applyTheme(dark);
+    });
+    media.addEventListener('change', e => { if (!localStorage.getItem('fincal.theme')) applyTheme(e.matches); });
+
+    /* ---------- Loan maths ---------- */
+    function emiOf(P, annualRate, n) {
+      const r = annualRate / 1200;
+      if (n <= 0 || P <= 0) return 0;
+      return r ? P * r * Math.pow(1 + r, n) / (Math.pow(1 + r, n) - 1) : P / n;
+    }
+    /* Amortisation with optional extra monthly prepayment. Returns yearly balances. */
+    function amortise(P, annualRate, n, extra) {
+      const r = annualRate / 1200, emi = emiOf(P, annualRate, n);
+      let bal = P, m = 0, interest = 0;
+      const bal_by_year = [P];
+      while (bal > 0.5 && m < n + 600) {
+        const i = bal * r;
+        interest += i;
+        bal -= Math.min(bal, emi - i);
+        m++;
+        if (m % 12 === 0) {
+          bal -= Math.min(bal, extra); /* yearly extra payment */
+          bal_by_year.push(Math.max(bal, 0));
+        }
+      }
+      if (m % 12 !== 0) bal_by_year.push(0);
+      return { emi, months: m, interest, bal_by_year };
+    }
+
+    /* ---------- Calculator definitions ---------- */
+    const num = (id, label, value, step = 1, hint = '') => ({ id, label, value, step, hint });
+    const sel = (id, label, value, opts) => ({ id, label, value, opts });
+
+    const calcs = {
+      home: {
+        title: 'Home Purchase Planner',
+        fields: [
+          num('h_price', 'Property Price (₹)', 7500000, 100000),
+          num('h_down', 'Down Payment (%)', 20, 1),
+          num('h_rate', 'Loan Interest Rate (%)', 8.5, .05),
+          num('h_years', 'Loan Tenure (Years)', 20, 1),
+          num('h_income', 'Monthly Income (₹)', 150000, 5000),
+          num('h_extra', 'Extra Payment per Year (₹)', 0, 10000)
+        ],
+        compute(v) {
+          const price = v.h_price, down = price * v.h_down / 100, loan = price - down;
+          const n = v.h_years * 12;
+          const base = amortise(loan, v.h_rate, n, 0), fast = amortise(loan, v.h_rate, n, v.h_extra);
+          const total = price + fast.interest;
+          const ratio = v.h_income ? base.emi / v.h_income * 100 : 0;
+          const rows = [
+            ['Loan Amount', inr(loan)],
+            ['Down Payment', inr(down)],
+            ['Total Interest', inr(fast.interest)],
+            ['Total Cost of Home', inr(total)],
+            ['EMI-to-Income Ratio', pct(ratio), ratio > 50 ? '' : 'good'],
+          ];
+          if (v.h_extra > 0) rows.push(
+            ['Interest Saved by Extra Payment', inr(base.interest - fast.interest), 'good'],
+            ['Time Saved', dur(Math.max(0, n - fast.months)), 'good'],
+            ['New Loan Tenure', dur(fast.months)]);
+          return {
+            big: ['Monthly EMI', inr(base.emi)], rows,
+            note: ratio > 50 ? '⚠️ EMI above 50% of income is usually considered risky.' : '',
+            pie: { labels: ['Down Payment', 'Loan Principal', 'Interest'], data: [down, loan, fast.interest], colors: ['#16a34a', '#2563eb', '#f59e0b'] },
+            line: {
+              title: 'Loan Balance by Year', labels: base.bal_by_year.map((_, i) => 'Y' + i),
+              sets: [['Standard EMI', base.bal_by_year, '#7c3aed'], ...(v.h_extra > 0 ? [['With extra payment', fast.bal_by_year, '#0d9488']] : [])]
+            }
+          };
+        }
+      },
+
+      sip: {
+        title: 'Monthly Investment (SIP)',
+        fields: [
+          num('s_amt', 'I invest every month (₹)', 10000, 500, 'Amount you put in each month'),
+          num('s_step', 'Increase it every year by (%)', 10, 1, 'e.g. 10% means ₹10,000 becomes ₹11,000 next year. Use 0 to keep it fixed'),
+          num('s_years', 'For how many years', 15, 1),
+          num('s_rate', 'Expected yearly return (%)', 12, .1, 'Not guaranteed. Equity funds are often assumed at 10–12%'),
+          num('s_inf', 'Expected yearly inflation (%)', 6, .1, 'Used to show what the money could buy in today\'s terms'),
+          num('s_goal', 'My target amount (₹)', 10000000, 100000, 'Optional. Set to 0 to ignore')
+        ],
+        compute(v) {
+          const r = v.s_rate / 1200;
+          const sim = (m0, years) => {
+            let bal = 0, inv = 0, m = m0; const val = [0], invs = [0];
+            for (let y = 0; y < years; y++) {
+              for (let k = 0; k < 12; k++) { bal = (bal + m) * (1 + r); inv += m; }
+              m *= 1 + v.s_step / 100; val.push(bal); invs.push(inv);
+            }
+            return { bal, inv, val, invs };
+          };
+          const s = sim(v.s_amt, v.s_years);
+          const real = s.bal / Math.pow(1 + v.s_inf / 100, v.s_years);
+          const hasGoal = v.s_goal > 0;
+          const rows = [
+            ['You invest in total', inr(s.inv)],
+            ['Growth earned', inr(s.bal - s.inv), 'good', 'Returns on top of what you put in'],
+            ['Worth in today\'s money', inr(real), '', 'After inflation, what this could buy at today\'s prices']
+          ];
+          let note = '', goal;
+          if (hasGoal) {
+            goal = Math.min(100, s.bal / v.s_goal * 100);
+            if (s.bal >= v.s_goal) {
+              let y = 1; while (y < v.s_years && sim(v.s_amt, y).bal < v.s_goal) y++;
+              note = `🎯 Target of ${inr(v.s_goal)} reached in about ${y} year${y > 1 ? 's' : ''}.`;
+            } else {
+              /* corpus scales linearly with the starting monthly amount */
+              const need = s.bal > 0 ? v.s_goal / (s.bal / v.s_amt) : 0;
+              note = `Short of your ${inr(v.s_goal)} target by ${inr(v.s_goal - s.bal)}. Starting with about ${inr(need)} a month would get you there.`;
+            }
+          }
+          return {
+            big: ['After ' + v.s_years + ' years you could have', inr(s.bal)], rows,
+            goal, note,
+            pie: { labels: ['You invest', 'Growth'], data: [s.inv, s.bal - s.inv], colors: ['#2563eb', '#16a34a'] },
+            line: {
+              title: 'How your money grows', labels: s.val.map((_, i) => 'Year ' + i),
+              sets: [['Total value', s.val, '#7c3aed'], ['Money you put in', s.invs, '#0d9488']]
+            }
+          };
+        }
+      },
+
+      fd: {
+        title: 'Fixed Deposit Calculator',
+        fields: [
+          num('f_p', 'Deposit Amount (₹)', 500000, 10000),
+          num('f_rate', 'Interest Rate (%)', 7, .1),
+          num('f_years', 'Years', 5, 1),
+          sel('f_pay', 'Interest Payout', 'cum', [['cum', 'Cumulative (at maturity)'], ['m', 'Monthly payout'], ['q', 'Quarterly payout']]),
+          sel('f_comp', 'Compounding (cumulative)', 4, [[1, 'Yearly'], [2, 'Half-yearly'], [4, 'Quarterly'], [12, 'Monthly']]),
+          num('f_tax', 'Tax Slab (%)', 30, 1),
+          num('f_inf', 'Inflation (%)', 6, .1)
+        ],
+        compute(v) {
+          const P = v.f_p, r = v.f_rate / 100, t = v.f_years, n = +v.f_comp;
+          const cum = v.f_pay === 'cum';
+          const valueAt = y => cum ? P * Math.pow(1 + r / n, n * y) : P + P * r * y;
+          const maturity = valueAt(t), interest = maturity - P;
+          const tax = interest * v.f_tax / 100, post = P + interest - tax;
+          const real = post / Math.pow(1 + v.f_inf / 100, t);
+          const rows = [];
+          if (!cum) {
+            const per = v.f_pay === 'm' ? 12 : 4;
+            rows.push([(v.f_pay === 'm' ? 'Monthly' : 'Quarterly') + ' Payout', inr(P * r / per), 'good']);
+          }
+          rows.push(['Total Interest', inr(interest)], ['Tax on Interest', inr(tax)],
+            ['Post-Tax Value', inr(post), 'good'], ['Post-Tax Effective Return', pct((Math.pow(post / P, 1 / t) - 1) * 100)],
+            ['Inflation-Adjusted Value', inr(real)]);
+          const labels = [...Array(t + 1).keys()];
+          return {
+            big: [cum ? 'Maturity Value' : 'Principal + Total Payouts', inr(maturity)], rows,
+            note: real < P ? '⚠️ After tax and inflation, your money loses purchasing power.' : '',
+            pie: { labels: ['Principal', 'Post-Tax Interest', 'Tax'], data: [P, interest - tax, tax], colors: ['#2563eb', '#16a34a', '#ef4444'] },
+            line: {
+              title: 'Value by Year', labels: labels.map(y => 'Y' + y),
+              sets: [['Pre-tax', labels.map(valueAt), '#7c3aed'], ['Post-tax', labels.map(y => P + (valueAt(y) - P) * (1 - v.f_tax / 100)), '#0d9488'],
+              ['Post-tax, inflation-adjusted', labels.map(y => (P + (valueAt(y) - P) * (1 - v.f_tax / 100)) / Math.pow(1 + v.f_inf / 100, y)), '#64748b']]
+            }
+          };
+        }
+      },
+
+      loan: {
+        title: 'EMI & Prepayment Calculator',
+        fields: [
+          num('l_amt', 'Loan Amount (₹)', 2000000, 50000),
+          num('l_rate', 'Interest Rate (%)', 10.5, .05),
+          num('l_years', 'Tenure (Years)', 5, 1),
+          num('l_extra', 'Extra Payment per Year (₹)', 0, 10000)
+        ],
+        compute(v) {
+          const n = v.l_years * 12;
+          const base = amortise(v.l_amt, v.l_rate, n, 0), fast = amortise(v.l_amt, v.l_rate, n, v.l_extra);
+          const rows = [
+            ['Total Interest', inr(fast.interest)],
+            ['Total Payment', inr(v.l_amt + fast.interest)],
+            ['Interest as % of Loan', pct(v.l_amt ? fast.interest / v.l_amt * 100 : 0)]
+          ];
+          if (v.l_extra > 0) rows.push(
+            ['Interest Saved', inr(base.interest - fast.interest), 'good'],
+            ['Time Saved', dur(Math.max(0, n - fast.months)), 'good'],
+            ['New Tenure', dur(fast.months)]);
+          return {
+            big: ['Monthly EMI', inr(base.emi)], rows,
+            pie: { labels: ['Principal', 'Interest'], data: [v.l_amt, fast.interest], colors: ['#2563eb', '#f59e0b'] },
+            line: {
+              title: 'Loan Balance by Year', labels: base.bal_by_year.map((_, i) => 'Y' + i),
+              sets: [['Standard EMI', base.bal_by_year, '#7c3aed'], ...(v.l_extra > 0 ? [['With extra payment', fast.bal_by_year, '#0d9488']] : [])]
+            }
+          };
+        }
+      }
+    };
+
+    /* ---------- Persistence ---------- */
+    const STORE = 'fincal.inputs.v3';
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem(STORE)) || {}; } catch (e) { }
+    const persist = () => {
+      const all = {};
+      document.querySelectorAll('[data-field]').forEach(el => all[el.id] = el.value);
+      try { localStorage.setItem(STORE, JSON.stringify(all)); } catch (e) { }
+    };
+
+    /* ---------- Build UI ---------- */
+    const PALETTE = ['#2563eb', '#7c3aed', '#16a34a', '#f59e0b', '#ef4444'];
+    const app = $('app');
+
+    Object.entries(calcs).forEach(([key, c]) => {
+      const fields = c.fields.map(f => {
+        const val = saved[f.id] ?? f.value;
+        const control = f.opts
+          ? `<select id="${f.id}" data-field>${f.opts.map(o => `<option value="${o[0]}"${o[0] == val ? ' selected' : ''}>${o[1]}</option>`).join('')}</select>`
+          : `<input type="number" inputmode="decimal" min="0" step="${f.step}" id="${f.id}" data-field value="${val}">`;
+        return `<div class="field"><label for="${f.id}">${f.label}</label>${control}${f.hint ? `<small class="hint">${f.hint}</small>` : ''}</div>`;
+      }).join('');
+
+      const sec = document.createElement('section');
+      sec.className = 'panel';
+      sec.id = key;
+      sec.innerHTML = `
+        <div class="card"><h2>${c.title}</h2><div class="field-grid">${fields}</div></div>
+        <div class="card results">
+          <div class="big-result"><h3 id="${key}-bt"></h3><strong id="${key}-bv"></strong></div>
+          <div id="${key}-goal" hidden><div class="goal-bar"><div></div></div><p class="note" id="${key}-gt"></p></div>
+          <div id="${key}-rows" class="results"></div>
+          <p class="note" id="${key}-note"></p>
+        </div>
+        <div class="charts">
+          <div class="card"><div class="chart-box"><canvas id="${key}-pie"></canvas></div></div>
+          <div class="card"><div class="chart-box"><canvas id="${key}-line"></canvas></div></div>
+        </div>`;
+      app.appendChild(sec);
+    });
+
+    /* ---------- Render ---------- */
+    function values(key) {
+      const v = {};
+      calcs[key].fields.forEach(f => {
+        const el = $(f.id);
+        v[f.id] = f.opts ? el.value : Math.max(0, parseFloat(el.value) || 0);
+      });
+      return v;
+    }
+
+    function drawChart(id, type, config) {
+      if (!window.Chart) return;
+      if (charts[id]) { charts[id].data = config.data; charts[id].update(); return; }
+      charts[id] = new Chart($(id), { type, data: config.data, options: config.options });
+    }
+
+    function render(key) {
+      const out = calcs[key].compute(values(key));
+      $(key + '-bt').textContent = out.big[0];
+      $(key + '-bv').textContent = out.big[1];
+      $(key + '-rows').innerHTML = out.rows.map(r =>
+        `<div class="result-row"><span>${r[0]}${r[3] ? `<small class="hint">${r[3]}</small>` : ''}</span><strong class="${r[2] || ''}">${r[1]}</strong></div>`).join('');
+      $(key + '-note').textContent = out.note || '';
+      const goal = $(key + '-goal');
+      goal.hidden = out.goal === undefined;
+      if (out.goal !== undefined) {
+        goal.querySelector('.goal-bar div').style.width = out.goal + '%';
+        $(key + '-gt').textContent = `Goal progress: ${out.goal.toFixed(0)}%`;
+      }
+
+      drawChart(key + '-pie', 'doughnut', {
+        data: { labels: out.pie.labels, datasets: [{ data: out.pie.data, backgroundColor: out.pie.colors || PALETTE, borderWidth: 0 }] },
+        options: {
+          maintainAspectRatio: false, cutout: '60%',
+          plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: c => ` ${c.label}: ${inr(c.parsed)}` } } }
+        }
+      });
+      drawChart(key + '-line', 'line', {
+        data: {
+          labels: out.line.labels, datasets: out.line.sets.map((s, i) => ({
+            label: s[0], data: s[1], borderColor: s[2] || PALETTE[i], backgroundColor: s[2] || PALETTE[i], tension: .3, pointRadius: 0, borderWidth: 2.5
+          }))
+        },
+        options: {
+          maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+          plugins: {
+            title: { display: true, text: out.line.title }, legend: { position: 'bottom' },
+            tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${inr(c.parsed.y)}` } }
+          },
+          scales: { y: { ticks: { callback: v => v >= 1e7 ? (v / 1e7).toFixed(1) + 'Cr' : v >= 1e5 ? (v / 1e5).toFixed(1) + 'L' : v } } }
+        }
+      });
+    }
+
+    const renderAll = () => Object.keys(calcs).forEach(render);
+
+    document.querySelectorAll('[data-field]').forEach(el => {
+      const handler = () => {
+        if (el.type === 'number' && parseFloat(el.value) < 0) el.value = 0;
+        persist();
+        const panel = el.closest('.panel');
+        render(panel.id);
+      };
+      el.addEventListener('input', handler);
+      el.addEventListener('change', handler);
+    });
+
+    /* ---------- Tabs (persisted) ---------- */
+    function showTab(tab) {
+      document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+      document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === tab));
+      localStorage.setItem('fincal.tab', tab);
+      Object.values(charts).forEach(c => c.resize());
+    }
+    $('tabs').addEventListener('click', e => { if (e.target.dataset.tab) showTab(e.target.dataset.tab); });
+
+    renderAll();
+    const tab = localStorage.getItem('fincal.tab');
+    showTab(calcs[tab] ? tab : 'home');
+    window.addEventListener('load', () => applyTheme(document.body.classList.contains('dark')));
+  </script>
+
+</body>
+
+</html>
